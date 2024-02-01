@@ -1,3 +1,8 @@
+package com.alfeno4ka.nasabot;
+
+import com.alfeno4ka.nasabot.util.DateConvertor;
+import com.alfeno4ka.nasabot.util.IntegrationUtils;
+import com.alfeno4ka.nasabot.model.EarthAnswer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -10,7 +15,7 @@ import java.time.format.DateTimeParseException;
 public class MyTelegramBot extends TelegramLongPollingBot {
     private final String BOT_NAME;
     private final String BOT_TOKEN;
-    private final String URL = "https://api.nasa.gov/planetary/apod?api_key=xnQphsLb9G7BYXSSjTDPvoSSApFqxdE3b2BTLONf";
+    private final String URL;
 
     private final DateConvertor dateConvertor;
 
@@ -19,6 +24,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
         this.BOT_TOKEN = BOT_TOKEN;
         dateConvertor = new DateConvertor();
 
+        String nasaApiKey = System.getenv("NASA_API_KEY");
+        URL = "https://api.nasa.gov/planetary/apod?api_key=" + nasaApiKey;
 
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
         botsApi.registerBot(this);
@@ -42,11 +49,11 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
                     break;
                 case "/start":
-                    String image = Utils.getUrl(URL);
+                    String image = IntegrationUtils.getUrl(URL);
                     sendMessage(image, chatId);
                     break;
                 case "/image":
-                    image = Utils.getUrl(URL);
+                    image = IntegrationUtils.getUrl(URL);
                     sendMessage(image, chatId);
                     break;
                 case "/date":
@@ -57,12 +64,12 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                         sendMessage("Не удалось определить дату", chatId);
                         break;
                     }
-                    image = Utils.getUrl(URL + "&date=" + dateStr);
+                    image = IntegrationUtils.getUrl(URL + "&date=" + dateStr);
                     sendMessage(image, chatId);
                     break;
                 case "/earth":
-                    Utils.getEarths("xnQphsLb9G7BYXSSjTDPvoSSApFqxdE3b2BTLONf");
-
+                    EarthAnswer latest = IntegrationUtils.getLatestEarthAnswer("xnQphsLb9G7BYXSSjTDPvoSSApFqxdE3b2BTLONf");
+                    //todo: функционал отображения фото земли
                 default:
                     sendMessage("Неизвестная команда", chatId);
 
