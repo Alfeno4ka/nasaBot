@@ -1,3 +1,4 @@
+package com.alfeno4ka.nasabot.util;
 
 import com.github.sisyphsu.dateparser.DateParserUtils;
 
