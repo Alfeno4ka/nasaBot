@@ -19,12 +19,14 @@ public class MyTelegramBot extends TelegramLongPollingBot {
 
     private final DateConvertor dateConvertor;
 
+    private String nasaApiKey;
+
     public MyTelegramBot(String BOT_NAME, String BOT_TOKEN) throws TelegramApiException {
         this.BOT_NAME = BOT_NAME;
         this.BOT_TOKEN = BOT_TOKEN;
         dateConvertor = new DateConvertor();
 
-        String nasaApiKey = System.getenv("NASA_API_KEY");
+        nasaApiKey = System.getenv("NASA_API_KEY");
         URL = "https://api.nasa.gov/planetary/apod?api_key=" + nasaApiKey;
 
         TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
@@ -68,7 +70,8 @@ public class MyTelegramBot extends TelegramLongPollingBot {
                     sendMessage(image, chatId);
                     break;
                 case "/earth":
-                    EarthAnswer latest = IntegrationUtils.getLatestEarthAnswer("xnQphsLb9G7BYXSSjTDPvoSSApFqxdE3b2BTLONf");
+                    sendMessage(IntegrationUtils.getEarthUrl(nasaApiKey), chatId);
+                    break;
                     //todo: функционал отображения фото земли
                 default:
                     sendMessage("Неизвестная команда", chatId);

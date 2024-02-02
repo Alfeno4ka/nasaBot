@@ -11,12 +11,15 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class IntegrationUtils {
     private static final String EARTH_URL = "https://api.nasa.gov/EPIC/api/natural/images?";
     private static final ObjectMapper MAPPER;
+
+    private static final String EARTH_IMAGE_URL =  "https://api.nasa.gov/EPIC/archive/natural/";
 
     static {
         MAPPER = new ObjectMapper();
@@ -61,5 +64,27 @@ public class IntegrationUtils {
             System.out.println("Была ошибка с ботом");
         }
         return null;
+    }
+
+    public static String getEarthUrl(String apiKey){
+        EarthAnswer latest = getLatestEarthAnswer(apiKey);
+
+        StringBuilder earthImageBuilder = new StringBuilder();
+        earthImageBuilder.append(EARTH_IMAGE_URL);
+        earthImageBuilder.append(getFormattedDate(latest.getDate()));
+        earthImageBuilder.append("/png/");
+        earthImageBuilder.append(latest.getImageId());
+        earthImageBuilder.append(".png");
+        earthImageBuilder.append("?api_key=");
+        earthImageBuilder.append(apiKey);
+
+        return earthImageBuilder.toString();
+
+
+    }
+
+    private static String getFormattedDate(Date from) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        return formatter.format(from);
     }
 }
